@@ -1,5 +1,6 @@
 #include "Map.h"
 #include "Player.h"
+#include "Enemy.h"
 #include <iostream>
 
 Map::Map() {
@@ -17,7 +18,7 @@ Map::Map() {
     };
 }
 
-void Map::draw(const Player& player) const {
+void Map::draw(const Player& player, const std::vector<Enemy>& enemies) const {
     // Clear the terminal. Windows only — I can give portable versions.
     system("cls");
 
@@ -26,12 +27,27 @@ void Map::draw(const Player& player) const {
         // Loop through each column (x)
         for (int x = 0; x < tiles[y].size(); ++x) {
 
-            // If this position matches the player's coordinates,
-            // print the @ symbol instead of the floor.
-            if (player.x == x && player.y == y)
+            bool printed = false;
+
+            // Draw player if they are here
+            if (player.x == x && player.y == y) {
                 std::cout << '@';
-            else
+                printed = true;
+            }
+
+            // Draw enemies if present on this tile
+            for (const auto& enemy : enemies) {
+                if (enemy.x == x && enemy.y == y) {
+                    std::cout << 'E';
+                    printed = true;
+                    break;
+                }
+            }
+
+            // If nothing else printed, draw the map tile
+            if (!printed) {
                 std::cout << tiles[y][x];
+            }
         }
         std::cout << '\n';
     }
