@@ -13,6 +13,7 @@ add_executable(roguelike
     src/Game.cpp
     src/Map.cpp
     src/Player.cpp
+    src/Enemy.cpp
 )
 
 # So #include "Game.h" works
