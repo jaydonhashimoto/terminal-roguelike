@@ -18,38 +18,51 @@ Map::Map() {
     };
 }
 
-void Map::draw(const Player& player, const std::vector<Enemy>& enemies) const {
-    // Clear the terminal. Windows only — I can give portable versions.
+void Map::draw(const Player& player,
+               const std::vector<std::unique_ptr<Enemy>>& enemies) const 
+{
+    // Clear console (Windows shortcut)
     system("cls");
 
-    // Loop through each row (y)
+    // Loop through every tile in the grid
     for (int y = 0; y < tiles.size(); ++y) {
-        // Loop through each column (x)
         for (int x = 0; x < tiles[y].size(); ++x) {
 
-            bool printed = false;
+            bool printedSomething = false;
 
-            // Draw player if they are here
+            // ----------------------------------------------
+            //  Draw the player if it's located at this tile
+            // ----------------------------------------------
             if (player.x == x && player.y == y) {
                 std::cout << '@';
-                printed = true;
+                printedSomething = true;
             }
 
-            // Draw enemies if present on this tile
+            // ----------------------------------------------
+            //  Draw enemies if any are located at this tile.
+            //
+            //  Each enemy is a pointer, so we use enemy->x.
+            //
+            //  We break after drawing one because you can't
+            //  see two enemies on the same tile anyway.
+            // ----------------------------------------------
             for (const auto& enemy : enemies) {
-                if (enemy.x == x && enemy.y == y) {
+                if (enemy->x == x && enemy->y == y) {
                     std::cout << 'E';
-                    printed = true;
+                    printedSomething = true;
                     break;
                 }
             }
 
-            // If nothing else printed, draw the map tile
-            if (!printed) {
+            // ----------------------------------------------
+            //  If nothing is drawn yet (player/enemy isn't here),
+            //  print the underlying map tile.
+            // ----------------------------------------------
+            if (!printedSomething) {
                 std::cout << tiles[y][x];
             }
         }
-        std::cout << '\n';
+        std::cout << '\n'; // End of row
     }
 }
 
