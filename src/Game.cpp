@@ -1,8 +1,61 @@
 #include "Game.h"
 #include <iostream>
-#include <conio.h>     // For _getch() input (Windows only)
 #include <memory>      // For std::make_unique and std::unique_ptr
 #include <algorithm>   // For std::remove_if (used to remove dead enemies)
+
+// Platform-specific includes for terminal input
+#ifdef _WIN32
+    #include <conio.h>  // For _getch() on Windows
+#else
+    #include <termios.h>  // For terminal settings on Unix/Linux
+    #include <unistd.h>   // For read() on Unix/Linux
+#endif
+
+// ========================================
+//  CROSS-PLATFORM CHARACTER INPUT
+// ========================================
+// Reads a single character from stdin without waiting for Enter.
+// Works on both Windows and Unix-like systems (Linux, macOS).
+char Game::getChar() {
+#ifdef _WIN32
+    // Windows: use _getch() from conio.h
+    return _getch();
+#else
+    // Unix/Linux: modify terminal settings temporarily
+    char buf = 0;
+    struct termios old = {0};
+    
+    // Get current terminal settings
+    if (tcgetattr(0, &old) < 0) {
+        perror("tcgetattr()");
+    }
+    
+    // Disable canonical mode (line buffering) and echo
+    old.c_lflag &= ~ICANON;  // Read character by character
+    old.c_lflag &= ~ECHO;    // Don't echo characters to screen
+    old.c_cc[VMIN] = 1;      // Minimum characters to read
+    old.c_cc[VTIME] = 0;     // No timeout
+    
+    // Apply new settings
+    if (tcsetattr(0, TCSANOW, &old) < 0) {
+        perror("tcsetattr ICANON");
+    }
+    
+    // Read one character
+    if (read(0, &buf, 1) < 0) {
+        perror("read()");
+    }
+    
+    // Restore original terminal settings
+    old.c_lflag |= ICANON;
+    old.c_lflag |= ECHO;
+    if (tcsetattr(0, TCSADRAIN, &old) < 0) {
+        perror("tcsetattr ~ICANON");
+    }
+    
+    return buf;
+#endif
+}
 
 void Game::run() {
     bool running = true;
@@ -62,7 +115,8 @@ void Game::run() {
         //  INPUT: Get player action
         // ----------------------------------------
         // Read a single key press without requiring Enter
-        char input = _getch();
+        // Works on both Windows and Linux
+        char input = getChar();
 
         // ----------------------------------------
         //  PROCESS INPUT: Determine movement direction

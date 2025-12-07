@@ -1,0 +1,49 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Docker: Attach to C++ Container",
+            "type": "cppdbg",
+            "request": "attach",
+            "processId": "${command:pickRemoteProcess}",
+            "program": "/usr/local/bin/roguelike",
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "sourceFileMap": {
+                "/app/src": "${workspaceFolder}/src"
+            },
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "pipeTransport": {
+                "debuggerPath": "/usr/bin/gdb",
+                "pipeProgram": "docker",
+                "pipeArgs": [
+                    "exec",
+                    "-i",
+                    "roguelike-debug",
+                    "sh",
+                    "-c"
+                ],
+                "pipeCwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "Docker: Launch with gdbserver",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/usr/local/bin/roguelike",
+            "cwd": "/app",
+            "MIMode": "gdb",
+            "miDebuggerServerAddress": "localhost:2345",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "sourceFileMap": {
+                "/app/src": "${workspaceFolder}/src"
+            }
+        }
+    ]
+}

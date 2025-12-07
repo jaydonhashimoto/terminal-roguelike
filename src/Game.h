@@ -20,6 +20,9 @@ public:
     void run();
 
 private:
+    // Cross-platform function to read a single character without echo
+    char getChar();
+
     Map map;   // Still stored by value since it's simple and static
 
     // The player is now dynamically allocated on the heap.

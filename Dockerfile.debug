@@ -1,0 +1,33 @@
+# Debug version of Dockerfile with gdb and debug symbols
+FROM alpine:3.19
+
+# Install build dependencies and debugging tools
+RUN apk add --no-cache \
+    g++ \
+    cmake \
+    make \
+    gdb \
+    openssh
+
+# Set working directory
+WORKDIR /app
+
+# Copy source files and CMakeLists.txt
+COPY CMakeLists.txt ./
+COPY src/ ./src/
+
+# Build with debug symbols (-g flag)
+RUN mkdir build && \
+    cd build && \
+    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug .. && \
+    cmake --build . && \
+    mv roguelike /usr/local/bin/roguelike
+
+# Keep source for debugging
+# Don't remove build artifacts in debug mode
+
+# Set up for remote debugging
+EXPOSE 2345
+
+# Start with shell for manual debugging or gdbserver
+CMD ["/bin/sh"]
