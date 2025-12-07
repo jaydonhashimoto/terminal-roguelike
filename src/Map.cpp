@@ -21,8 +21,12 @@ Map::Map() {
 void Map::draw(const Player& player,
                const std::vector<std::unique_ptr<Enemy>>& enemies) const 
 {
-    // Clear console (Windows shortcut)
-    system("cls");
+    // Clear console (cross-platform)
+#ifdef _WIN32
+    system("cls");    // Windows
+#else
+    system("clear");  // Linux/macOS
+#endif
 
     // Loop through every tile in the grid
     for (int y = 0; y < tiles.size(); ++y) {
