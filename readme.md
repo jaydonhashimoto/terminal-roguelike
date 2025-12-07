@@ -19,7 +19,7 @@ A simple terminal-based roguelike game written in C++ to learn fundamental progr
 
 ## Building and Running
 
-Running on Windows:
+### Windows (Native)
 
 ```bash
 mkdir build
@@ -28,6 +28,20 @@ cmake -G "MinGW Makefiles" ..
 cmake --build .
 ./roguelike
 ```
+
+### Docker (Cross-platform)
+
+Build the Docker image:
+```bash
+docker build -t terminal-roguelike .
+```
+
+Run the game in a container:
+```bash
+docker run -it terminal-roguelike
+```
+
+Note: The `-it` flags are required for interactive terminal input.
 
 ## Controls
 

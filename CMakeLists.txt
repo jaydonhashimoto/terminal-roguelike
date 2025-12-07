@@ -7,6 +7,9 @@ project(Roguelike LANGUAGES CXX VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Enable debug symbols for debugging
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")
+
 # Build an executable from these source files
 add_executable(roguelike
     src/main.cpp

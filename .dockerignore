@@ -1,0 +1,7 @@
+# Docker ignore file to keep build context small
+build/
+.git/
+.gitignore
+readme.md
+*.md
+.vscode/
